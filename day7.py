@@ -63,3 +63,12 @@ for name, node in Tree.items():
 
 
 print("\ntotal:", part1)
+
+free = 70000000 - Tree["root"].size
+part2 = 70000000
+for name, node in Tree.items():
+    if node.is_dir:
+        node.size = node.get_size()
+        if node.size + free >= 30000000 and node.size < part2:
+            part2 = node.size
+print(part2)
