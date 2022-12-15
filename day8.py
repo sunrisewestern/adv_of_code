@@ -41,10 +41,33 @@ class Matrix:
             right = self[i, j + 1 : self.ncol]
             top = self[0:i, j]
             bottom = self[i + 1 : self.nrow, j]
-            if any([_ > h for _ in [*left, *right, *top, *bottom]]):
-                return True
+            for ls in [left, right, top, bottom]:
+                if all([_ < h for _ in ls]):
+                    return True
             else:
                 return False
+
+    def cal_scenic_score(self, i: int, j: int) -> int:
+        h = self[i, j]
+        left = self[i, 0:j][::-1]
+        right = self[i, j + 1 : self.ncol]
+        top = self[0:i, j][::-1]
+        bottom = self[i + 1 : self.nrow, j]
+
+        def cal_score(ls, height):
+            score = 0
+            for n in ls:
+                if n < height:
+                    score += 1
+                else:
+                    score += 1
+                    break
+            return score
+
+        scenic_score = 1
+        for ls in [left, right, top, bottom]:
+            scenic_score = scenic_score * cal_score(ls, h)
+        return scenic_score
 
 
 with open("./day8_input.txt", "r") as f:
@@ -55,7 +78,11 @@ mat.ncol
 mat.nrow
 
 mat[1, 3]
-mat.check_visibility(1, 2)
+print(mat.check_visibility(1, 3))
+
+mat[2, 3]
+print(mat.check_visibility(2, 3))
+
 
 n_vis = 0
 for i in range(mat.nrow):
@@ -63,3 +90,10 @@ for i in range(mat.nrow):
         if mat.check_visibility(i, j):
             n_vis += 1
 print(n_vis)
+
+scenic_score = 0
+for i in range(mat.nrow):
+    for j in range(mat.ncol):
+        if mat.cal_scenic_score(i, j) > scenic_score:
+            scenic_score = mat.cal_scenic_score(i, j)
+print(scenic_score)
