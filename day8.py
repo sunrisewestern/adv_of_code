@@ -12,7 +12,7 @@ class Matrix:
             self.nrow = nrow
             self.ncol = ncol
             self.shape = (self.nrow, self.ncol)
-            self._matrix = [[value for _ in range(nrow) for _ in range(ncol)]]
+            self._matrix = [[value for _ in range(ncol)] for _ in range(nrow)]
 
     def __getitem__(self, index):
         # print(index,type(index))
@@ -27,10 +27,17 @@ class Matrix:
                 return [_[index[1]] for _ in self._matrix[index[0]]]
 
     def __setitem__(self, index, value):
-        if isinstance(index, int):
-            self._matrix[index] = [_ for _ in value]
-        elif isinstance(index, tuple):
-            self._matrix[index[0]][index[1]] = value
+        match index:
+            case int():
+                self._matrix[index] = [_ for _ in value]
+            case slice():
+                self._matrix[index] = [_ for _ in value]
+            case (int(), int() | slice()):
+                self._matrix[index[0]][index[1]] = [_ for _ in value]
+            case (slice(), int() | slice()):
+                for i in index[0]:
+                    for j in index[1]:
+                        self._matrix[i][j] = value
 
     def check_visibility(self, i: int, j: int) -> bool:
         if i == 0 or i == self.nrow - 1 or j == 0 or j == self.ncol - 1:
@@ -76,6 +83,9 @@ with open("./day8_input.txt", "r") as f:
 mat = Matrix(lines)
 mat.ncol
 mat.nrow
+
+mm = Matrix("#", 6, 40)
+print(mm._matrix)
 
 mat[1, 3]
 print(mat.check_visibility(1, 3))
