@@ -100,7 +100,7 @@ class Rope:
             case Knot(x, y) if abs(x) == 2 and abs(y) == 2:
                 knot.next += 1 * [1, -1][x < 0], 1 * [1, -1][y < 0]
             case _:
-                raise ValueError(f"Head moved upexpectively: {knot - knot.next}")
+                raise ValueError(f"Head moved upexpectedly: {knot - knot.next}")
 
     def update_rope(self):
         p = self.Head
