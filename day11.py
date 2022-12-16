@@ -10,13 +10,13 @@ class Monkey:
         name,
         start_items: list = None,
         operation: str = None,
-        dividend: int = None,
-        worry_management="new = new/3",
+        divisor: int = None,
+        worry_management=None,
     ) -> None:
         self.name = name
         self.items = start_items
         self.operation = operation
-        self.dividend = dividend
+        self.divisor = divisor
         self.worry_management = worry_management
         self.if_true_monkey_name = None
         self.if_false_monkey_name = None
@@ -30,14 +30,15 @@ class Monkey:
         for i in range(len(self.items)):
             _local = {"old": self.items[i], "new": 0}
             exec(self.operation, _local)
-            exec(self.worry_management, _local)
+            if self.worry_management:
+                exec(self.worry_management, _local)
             self.items[i] = math.floor(_local["new"])
             self.inspected += 1
 
     def throw(self):
         while len(self.items) > 0:
             item = self.items.pop(0)
-            if item % self.dividend == 0:
+            if item % self.divisor == 0:
                 self.if_true_monkey.items.append(item)
             else:
                 self.if_false_monkey.items.append(item)
@@ -63,7 +64,7 @@ def initialize(filename):
             elif line.startswith("Test"):
                 _, Test = line.split(":")
                 _, _, devidend = Test.strip().split(" ")
-                monkeys[name].dividend = int(devidend)
+                monkeys[name].divisor = int(devidend)
             elif line.startswith("If true"):
                 _, throw = line.split(":")
                 _, _, _, whom = throw.strip().split(" ")
@@ -75,15 +76,6 @@ def initialize(filename):
     for k in monkeys.keys():
         monkeys[k].assign_monkey(monkeys)
     return monkeys
-
-
-def run(monkeys, round=1):
-    for i in range(round):
-        for k in monkeys.keys():
-            monkeys[k].inspect()
-            monkeys[k].throw()
-        if i in (0, 19, 999, 1999):
-            print(cal_monkey_business(monkeys))
 
 
 def cal_monkey_business(monkeys) -> list:
@@ -100,13 +92,21 @@ def worry_manage(monkeys, new_management):
         monkeys[k].worry_management = new_management
 
 
+def run(monkeys, round=1):
+    for i in range(round):
+        for k in monkeys.keys():
+            monkeys[k].inspect()
+            monkeys[k].throw()
+        if i in (0, 19, 999, 1999):
+            print(cal_monkey_business(monkeys))
+
+
 # monkeys = initialize("./day11_example.txt")
-# # monkeys = initialize("./day11_input.txt")
+# worry_manage(monkeys, "new = new/3")
 # run(monkeys, 20)
 # print(cal_monkey_business(monkeys))
 
 
 monkeys = initialize("./day11_example.txt")
-worry_manage(monkeys, "new = new/4")
-run(monkeys, 10000)
-# print(cal_monkey_business(monkeys))
+run(monkeys, 20)
+print(cal_monkey_business(monkeys))
