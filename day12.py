@@ -1,8 +1,6 @@
 #!/usr/bin/env python3.10
 # -*-coding:utf-8 -*-
 
-from dataclasses import dataclass
-
 
 class Square:
     __match_args__ = ("x", "y")
